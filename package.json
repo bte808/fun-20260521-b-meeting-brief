@@ -1,0 +1,18 @@
+{
+  "name": "fun-20260521-b-meeting-brief",
+  "version": "1.0.0",
+  "description": "Local meeting notes cleaner that turns rough notes into action items, decisions, questions, and a follow-up brief.",
+  "type": "module",
+  "scripts": {
+    "test": "node --test",
+    "check": "node scripts/static-check.mjs && node --test"
+  },
+  "keywords": [
+    "meeting-notes",
+    "productivity",
+    "local-first",
+    "checklist"
+  ],
+  "author": "bte808",
+  "license": "MIT"
+}

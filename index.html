@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Turn rough meeting notes into action items, decisions, questions, and a follow-up brief locally in your browser.">
+    <title>Meeting Brief</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="styles.css">
+    <script type="module" src="src/app.js"></script>
+  </head>
+  <body>
+    <header class="app-header">
+      <div class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 64 64" role="img">
+          <rect x="8" y="10" width="48" height="44" rx="8"></rect>
+          <path d="M18 22h28M18 32h20M18 42h15"></path>
+          <circle cx="47" cy="42" r="5"></circle>
+        </svg>
+      </div>
+      <div>
+        <p class="eyebrow">Local-first meeting cleanup</p>
+        <h1>Meeting Brief</h1>
+      </div>
+      <div class="privacy-chip">No login · No upload</div>
+    </header>
+
+    <main class="workspace">
+      <section class="panel input-panel" aria-labelledby="input-title">
+        <div class="panel-head">
+          <div>
+            <p class="section-kicker">Input</p>
+            <h2 id="input-title">Rough notes</h2>
+          </div>
+          <button id="sampleBtn" class="ghost-button" type="button">Load sample</button>
+        </div>
+
+        <label class="field-label" for="notesInput">Paste notes from a call, class project, standup, or planning chat.</label>
+        <textarea id="notesInput" spellcheck="true"></textarea>
+
+        <div class="controls">
+          <label class="option">
+            <input id="keepOriginal" type="checkbox" checked>
+            Keep original lines in export
+          </label>
+          <label class="option">
+            <input id="sortByDue" type="checkbox" checked>
+            Sort actions by due date
+          </label>
+          <label class="option">
+            <input id="includeEmail" type="checkbox" checked>
+            Include follow-up email
+          </label>
+        </div>
+
+        <div class="button-row">
+          <button id="parseBtn" class="primary-button" type="button">Generate brief</button>
+          <button id="clearBtn" class="secondary-button" type="button">Clear</button>
+        </div>
+      </section>
+
+      <section class="panel output-panel" aria-labelledby="output-title">
+        <div class="panel-head">
+          <div>
+            <p class="section-kicker">Output</p>
+            <h2 id="output-title">Ready brief</h2>
+          </div>
+          <div class="button-row compact">
+            <button id="copyBtn" class="secondary-button" type="button">Copy</button>
+            <button id="downloadBtn" class="secondary-button" type="button">Save .md</button>
+          </div>
+        </div>
+
+        <div class="metrics" aria-label="Detected meeting note counts">
+          <div><strong id="actionCount">0</strong><span>Actions</span></div>
+          <div><strong id="decisionCount">0</strong><span>Decisions</span></div>
+          <div><strong id="questionCount">0</strong><span>Questions</span></div>
+        </div>
+
+        <div class="tabs" role="tablist" aria-label="Brief views">
+          <button class="tab-button is-active" type="button" data-view="preview" role="tab" aria-selected="true">Preview</button>
+          <button class="tab-button" type="button" data-view="markdown" role="tab" aria-selected="false">Markdown</button>
+          <button class="tab-button" type="button" data-view="email" role="tab" aria-selected="false">Email</button>
+        </div>
+
+        <div id="statusLine" class="status-line" role="status">Paste notes or use the sample to generate a brief.</div>
+        <article id="preview" class="preview" data-view-panel="preview"></article>
+        <textarea id="markdownOutput" class="result-text" data-view-panel="markdown" readonly hidden></textarea>
+        <textarea id="emailOutput" class="result-text" data-view-panel="email" readonly hidden></textarea>
+      </section>
+    </main>
+  </body>
+</html>
