@@ -19,10 +19,39 @@ const ACTION_WORDS = [
   "need",
   "needs",
   "todo",
-  "action"
+  "action",
+  "发送",
+  "分享",
+  "复盘",
+  "确认",
+  "预订",
+  "预约",
+  "安排",
+  "起草",
+  "完成",
+  "跟进",
+  "更新",
+  "准备",
+  "检查",
+  "修复",
+  "提交",
+  "收集",
+  "决定",
+  "需要",
+  "待办",
+  "行动项"
 ];
 
 const DAY_NAMES = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
+const CHINESE_DAY_NAMES = [
+  { day: 0, pattern: /(?:星期日|星期天|周日|周天|礼拜日|礼拜天)/ },
+  { day: 1, pattern: /(?:星期一|周一|礼拜一)/ },
+  { day: 2, pattern: /(?:星期二|周二|礼拜二)/ },
+  { day: 3, pattern: /(?:星期三|周三|礼拜三)/ },
+  { day: 4, pattern: /(?:星期四|周四|礼拜四)/ },
+  { day: 5, pattern: /(?:星期五|周五|礼拜五)/ },
+  { day: 6, pattern: /(?:星期六|周六|礼拜六)/ }
+];
 
 export const SAMPLE_NOTES = `Alex: send revised launch deck by Friday
 Mina - confirm budget by 2026-05-24
@@ -31,6 +60,13 @@ Question: Do we need legal review before the beta invite?
 Follow up with Kai tomorrow about venue booking
 Sam to review onboarding copy 5/26
 Risk: supplier quote may slip if we wait until next week`;
+
+export const SAMPLE_NOTES_ZH = `小林：明天发送会议纪要
+阿杰 - 5月24日确认场地预算
+决定：先发布本地-only版本
+问题：周五前要不要法务确认？
+风险：供应商报价可能下周延迟
+跟进小周今天整理报名名单`;
 
 export function parseNotes(rawText, options = {}) {
   const baseDate = options.now ? new Date(options.now) : new Date();
@@ -175,13 +211,13 @@ export function normalizeLine(line) {
 }
 
 function extractOwner(line) {
-  const ownerMatch = line.match(/^(@?[A-Z][A-Za-z0-9 ._']{0,28}?)(?::|\s+-\s+|\s+to\s+)(.+)$/);
+  const ownerMatch = line.match(/^(@?[\p{L}\p{N} ._']{1,30}?)(?::|：|\s+-\s+|\s+to\s+)(.+)$/u);
   if (!ownerMatch) {
     return { owner: "", body: line };
   }
 
   const possibleOwner = ownerMatch[1].replace(/^@/, "").trim();
-  if (ACTION_WORDS.some((word) => possibleOwner.toLowerCase().startsWith(word))) {
+  if (ACTION_WORDS.some((word) => possibleOwner.toLowerCase().startsWith(word.toLowerCase()))) {
     return { owner: "", body: line };
   }
 
@@ -189,6 +225,17 @@ function extractOwner(line) {
 }
 
 function extractDueDate(text, baseDate) {
+  const chineseFull = text.match(/(20\d{2})年\s*(\d{1,2})月\s*(\d{1,2})日?/);
+  if (chineseFull) {
+    return formatDate(new Date(Number(chineseFull[1]), Number(chineseFull[2]) - 1, Number(chineseFull[3])));
+  }
+
+  const chineseMonthDay = text.match(/(^|[^\d年])(\d{1,2})月\s*(\d{1,2})日?/);
+  if (chineseMonthDay) {
+    const year = baseDate.getFullYear();
+    return formatDate(new Date(year, Number(chineseMonthDay[2]) - 1, Number(chineseMonthDay[3])));
+  }
+
   const iso = text.match(/\b(20\d{2})-(\d{1,2})-(\d{1,2})\b/);
   if (iso) {
     return formatDate(new Date(Number(iso[1]), Number(iso[2]) - 1, Number(iso[3])));
@@ -205,8 +252,20 @@ function extractDueDate(text, baseDate) {
     return formatDate(baseDate);
   }
 
+  if (/今天/.test(text)) {
+    return formatDate(baseDate);
+  }
+
   if (/\btomorrow\b/.test(lower)) {
     return formatDate(addDays(baseDate, 1));
+  }
+
+  if (/明天/.test(text)) {
+    return formatDate(addDays(baseDate, 1));
+  }
+
+  if (/后天/.test(text)) {
+    return formatDate(addDays(baseDate, 2));
   }
 
   for (let index = 0; index < DAY_NAMES.length; index += 1) {
@@ -216,42 +275,53 @@ function extractDueDate(text, baseDate) {
     }
   }
 
+  for (const weekday of CHINESE_DAY_NAMES) {
+    if (weekday.pattern.test(text)) {
+      const offset = nextDayOffset(baseDate.getDay(), weekday.day);
+      return formatDate(addDays(baseDate, offset));
+    }
+  }
+
   return "";
 }
 
 function inferPriority(text, due) {
   const lower = text.toLowerCase();
-  if (/\b(urgent|asap|blocked|critical|risk)\b/.test(lower)) {
+  if (/\b(urgent|asap|blocked|critical|risk)\b/.test(lower) || /(紧急|尽快|阻塞|风险|关键)/.test(text)) {
     return "high";
   }
   return due ? "dated" : "normal";
 }
 
 function isDecision(text) {
-  return /^(decision|decided|we decided)\b[:\s-]*/i.test(text);
+  return /^(decision|decided|we decided)\b[:\s-]*/i.test(text) || /^(决定|决议|结论|已决定)[:：\s-]*/.test(text);
 }
 
 function isQuestion(text) {
-  return /^(question|q)\b[:\s-]*/i.test(text) || /\?\s*$/.test(text);
+  return /^(question|q)\b[:\s-]*/i.test(text) || /^(问题|疑问)[:：\s-]*/.test(text) || /[?？]\s*$/.test(text);
 }
 
 function isRisk(text) {
-  return /^(risk|blocker|blocked)\b[:\s-]*/i.test(text);
+  return /^(risk|blocker|blocked)\b[:\s-]*/i.test(text) || /^(风险|阻塞)[:：\s-]*/.test(text);
 }
 
 function looksActionable(text, owner) {
   const lower = text.toLowerCase();
-  return Boolean(owner) || ACTION_WORDS.some((word) => lower.includes(word));
+  return Boolean(owner) || ACTION_WORDS.some((word) => lower.includes(word.toLowerCase()));
 }
 
-function stripLeadLabel(text, label) {
+function stripLeadLabel(text) {
   return text
     .replace(/^(decision|decided|we decided|question|questions|q|risk|risks|blocker|blocked)\b[:\s-]*/i, "")
+    .replace(/^(决定|决议|结论|已决定|问题|疑问|风险|阻塞)[:：\s-]*/, "")
     .trim();
 }
 
 function stripActionLead(text) {
-  return text.replace(/^(todo|action)\b[:\s-]*/i, "").trim();
+  return text
+    .replace(/^(todo|action)\b[:\s-]*/i, "")
+    .replace(/^(待办|行动项)[:：\s-]*/, "")
+    .trim();
 }
 
 function formatActionMarkdown(action) {

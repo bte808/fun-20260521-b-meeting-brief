@@ -6,9 +6,9 @@ Repository: `fun-20260521-b-meeting-brief`
 
 ## What It Does
 
-- Detects action items from lines with an owner or action verb.
-- Pulls out decisions, questions, risks, and other notes.
-- Recognizes simple due dates such as `2026-05-24`, `5/24`, `tomorrow`, and weekdays.
+- Detects English and Chinese action items from lines with an owner or action verb.
+- Pulls out decisions, questions, risks, and other notes from English or Chinese labels.
+- Recognizes simple due dates such as `2026-05-24`, `5/24`, `5月24日`, `tomorrow`, `明天`, weekdays, and `周五`.
 - Generates copyable Markdown and an email follow-up draft.
 - Saves the Markdown brief as a local `.md` file.
 - Runs fully in the browser with no login, API key, upload, or server database.
@@ -48,7 +48,7 @@ http://localhost:5181/
 ## Core Usage
 
 1. Paste rough notes into the input box.
-2. Keep or change the export options.
+2. Keep or change the export options, or use the English/Chinese samples.
 3. Click **Generate brief**.
 4. Use **Copy** or **Save .md**.
 5. Switch between Preview, Markdown, and Email views.
@@ -61,6 +61,14 @@ Mina - confirm budget by 2026-05-24
 Decision: ship the local-only version first
 Question: Do we need legal review before the beta invite?
 Follow up with Kai tomorrow about venue booking
+```
+
+```text
+小林：明天发送会议纪要
+阿杰 - 5月24日确认场地预算
+决定：先发布本地-only版本
+问题：周五前要不要法务确认？
+风险：供应商报价可能下周延迟
 ```
 
 ## Checks
@@ -77,4 +85,4 @@ The checks cover parsing behavior and a lightweight static scan for expected fil
 - Add `.ics` calendar reminders for dated action items.
 - Add editable parser rules for team-specific owner names.
 - Add a compact print view for handoff notes.
-- Add Chinese action and date phrase detection.
+- Add team-specific keyword packs for recurring project rituals.

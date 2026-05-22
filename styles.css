@@ -191,6 +191,10 @@ textarea:focus {
   justify-content: flex-end;
 }
 
+.sample-actions {
+  flex-wrap: nowrap;
+}
+
 button {
   min-height: 42px;
   border: 0;
@@ -384,6 +388,10 @@ button:focus-visible {
   .button-row,
   .compact {
     width: 100%;
+  }
+
+  .sample-actions {
+    flex-wrap: wrap;
   }
 
   .button-row button {

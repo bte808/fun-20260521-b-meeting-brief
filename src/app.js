@@ -1,4 +1,4 @@
-import { SAMPLE_NOTES, buildEmail, buildMarkdown, parseNotes } from "./parser.js";
+import { SAMPLE_NOTES, SAMPLE_NOTES_ZH, buildEmail, buildMarkdown, parseNotes } from "./parser.js";
 
 const notesInput = document.querySelector("#notesInput");
 const keepOriginal = document.querySelector("#keepOriginal");
@@ -7,6 +7,7 @@ const includeEmail = document.querySelector("#includeEmail");
 const parseBtn = document.querySelector("#parseBtn");
 const clearBtn = document.querySelector("#clearBtn");
 const sampleBtn = document.querySelector("#sampleBtn");
+const sampleZhBtn = document.querySelector("#sampleZhBtn");
 const copyBtn = document.querySelector("#copyBtn");
 const downloadBtn = document.querySelector("#downloadBtn");
 const preview = document.querySelector("#preview");
@@ -29,6 +30,11 @@ generateBrief();
 parseBtn.addEventListener("click", generateBrief);
 sampleBtn.addEventListener("click", () => {
   notesInput.value = SAMPLE_NOTES;
+  generateBrief();
+});
+
+sampleZhBtn.addEventListener("click", () => {
+  notesInput.value = SAMPLE_NOTES_ZH;
   generateBrief();
 });
 

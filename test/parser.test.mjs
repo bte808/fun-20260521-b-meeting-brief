@@ -26,6 +26,22 @@ describe("parseNotes", () => {
     assert.deepEqual(brief.risks, ["quote may slip"]);
   });
 
+  it("handles Chinese owners, labels, and dates", () => {
+    const brief = parseNotes(
+      "小林：明天发送会议纪要\n阿杰 - 5月24日确认场地预算\n决定：先做本地版本\n问题：周五前要不要法务确认？\n风险：供应商可能延迟",
+      { now: NOW }
+    );
+
+    assert.equal(brief.actions.length, 2);
+    assert.equal(brief.actions[0].owner, "小林");
+    assert.equal(brief.actions[0].due, "2026-05-22");
+    assert.equal(brief.actions[1].owner, "阿杰");
+    assert.equal(brief.actions[1].due, "2026-05-24");
+    assert.deepEqual(brief.decisions, ["先做本地版本"]);
+    assert.deepEqual(brief.questions, ["周五前要不要法务确认？"]);
+    assert.deepEqual(brief.risks, ["供应商可能延迟"]);
+  });
+
   it("builds copyable markdown and follow-up email", () => {
     const brief = parseNotes("Sam to review onboarding copy tomorrow\nDecision: keep it local", { now: NOW });
     const markdown = buildMarkdown(brief, { keepOriginal: true });
