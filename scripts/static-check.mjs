@@ -18,6 +18,8 @@ assert.match(html, /id="sampleZhBtn"/);
 assert.match(css, /@media \(max-width: 860px\)/);
 assert.match(app, /navigator\.clipboard\.writeText/);
 assert.match(app, /SAMPLE_NOTES_ZH/);
+assert.match(app, /optionInputs/);
+assert.match(app, /addEventListener\("change", generateBrief\)/);
 assert.match(parser, /export function parseNotes/);
 assert.match(readme, /fun-20260521-b-meeting-brief/);
 assert.doesNotMatch(combined, /gho_[A-Za-z0-9_]+/);

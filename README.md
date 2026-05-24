@@ -11,6 +11,7 @@ Repository: `fun-20260521-b-meeting-brief`
 - Recognizes simple due dates such as `2026-05-24`, `5/24`, `5月24日`, `tomorrow`, `明天`, weekdays, and `周五`.
 - Generates copyable Markdown and an email follow-up draft.
 - Saves the Markdown brief as a local `.md` file.
+- Refreshes the preview immediately when export options change.
 - Runs fully in the browser with no login, API key, upload, or server database.
 
 ## Why It Is Useful

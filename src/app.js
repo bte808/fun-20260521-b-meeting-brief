@@ -19,6 +19,7 @@ const decisionCount = document.querySelector("#decisionCount");
 const questionCount = document.querySelector("#questionCount");
 const tabButtons = document.querySelectorAll(".tab-button");
 const panels = document.querySelectorAll("[data-view-panel]");
+const optionInputs = [keepOriginal, sortByDue, includeEmail];
 
 let latestMarkdown = "";
 let latestEmail = "";
@@ -80,6 +81,10 @@ downloadBtn.addEventListener("click", () => {
 
 for (const button of tabButtons) {
   button.addEventListener("click", () => switchView(button.dataset.view));
+}
+
+for (const option of optionInputs) {
+  option.addEventListener("change", generateBrief);
 }
 
 function generateBrief() {
