@@ -55,6 +55,7 @@ const CHINESE_DAY_NAMES = [
 
 export const SAMPLE_NOTES = `Alex: send revised launch deck by Friday
 Mina - confirm budget by 2026-05-24
+Action item: Jordan to check launch blockers ASAP
 Decision: ship the local-only version first
 Question: Do we need legal review before the beta invite?
 Follow up with Kai tomorrow about venue booking
@@ -63,10 +64,10 @@ Risk: supplier quote may slip if we wait until next week`;
 
 export const SAMPLE_NOTES_ZH = `小林：明天发送会议纪要
 阿杰 - 5月24日确认场地预算
+行动项：小周：今天整理报名名单
 决定：先发布本地-only版本
 问题：周五前要不要法务确认？
-风险：供应商报价可能下周延迟
-跟进小周今天整理报名名单`;
+风险：供应商报价可能下周延迟`;
 
 export function parseNotes(rawText, options = {}) {
   const baseDate = options.now ? new Date(options.now) : new Date();
@@ -99,7 +100,8 @@ export function parseNotes(rawText, options = {}) {
       continue;
     }
 
-    const ownerResult = extractOwner(cleaned);
+    const actionableText = stripActionLead(cleaned);
+    const ownerResult = extractOwner(actionableText);
     const body = ownerResult.body;
     const due = extractDueDate(body, baseDate);
     const priority = inferPriority(body, due);
@@ -319,8 +321,9 @@ function stripLeadLabel(text) {
 
 function stripActionLead(text) {
   return text
-    .replace(/^(todo|action)\b[:\s-]*/i, "")
-    .replace(/^(待办|行动项)[:：\s-]*/, "")
+    .replace(/^(todo)\b[:\s-]*/i, "")
+    .replace(/^(action(?:\s+item)?|next step)\b\s*[:：-]\s*/i, "")
+    .replace(/^(待办|行动项|下一步)\s*[:：-]\s*/, "")
     .trim();
 }
 

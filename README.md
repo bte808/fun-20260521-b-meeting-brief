@@ -7,6 +7,7 @@ Repository: `fun-20260521-b-meeting-brief`
 ## What It Does
 
 - Detects English and Chinese action items from lines with an owner or action verb.
+- Keeps the owner when notes use explicit labels such as `Action item:` or `行动项：`.
 - Pulls out decisions, questions, risks, and other notes from English or Chinese labels.
 - Recognizes simple due dates such as `2026-05-24`, `5/24`, `5月24日`, `tomorrow`, `明天`, weekdays, and `周五`.
 - Generates copyable Markdown and an email follow-up draft.
@@ -59,6 +60,7 @@ http://localhost:5181/
 ```text
 Alex: send revised launch deck by Friday
 Mina - confirm budget by 2026-05-24
+Action item: Jordan to check launch blockers ASAP
 Decision: ship the local-only version first
 Question: Do we need legal review before the beta invite?
 Follow up with Kai tomorrow about venue booking
@@ -67,6 +69,7 @@ Follow up with Kai tomorrow about venue booking
 ```text
 小林：明天发送会议纪要
 阿杰 - 5月24日确认场地预算
+行动项：小周：今天整理报名名单
 决定：先发布本地-only版本
 问题：周五前要不要法务确认？
 风险：供应商报价可能下周延迟

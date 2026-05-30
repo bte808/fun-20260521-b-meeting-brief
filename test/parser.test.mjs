@@ -42,6 +42,21 @@ describe("parseNotes", () => {
     assert.deepEqual(brief.risks, ["供应商可能延迟"]);
   });
 
+  it("keeps owners after explicit action labels", () => {
+    const brief = parseNotes(
+      "Action item: Jordan to check launch blockers ASAP\n行动项：小周：今天整理报名名单",
+      { now: NOW }
+    );
+
+    assert.equal(brief.actions.length, 2);
+    assert.equal(brief.actions[0].owner, "小周");
+    assert.equal(brief.actions[0].task, "今天整理报名名单");
+    assert.equal(brief.actions[0].due, "2026-05-21");
+    assert.equal(brief.actions[1].owner, "Jordan");
+    assert.equal(brief.actions[1].task, "check launch blockers ASAP");
+    assert.equal(brief.actions[1].priority, "high");
+  });
+
   it("builds copyable markdown and follow-up email", () => {
     const brief = parseNotes("Sam to review onboarding copy tomorrow\nDecision: keep it local", { now: NOW });
     const markdown = buildMarkdown(brief, { keepOriginal: true });
